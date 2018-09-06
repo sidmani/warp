@@ -1,0 +1,30 @@
+{
+  "name": "warp",
+  "version": "0.0.1",
+  "description": "get shit done for once",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "todo",
+    "organize",
+    "project",
+    "plan",
+    "track"
+  ],
+  "author": "Sid Mani",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^5.5.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "tap": "^12.0.1"
+  },
+  "dependencies": {
+    "fs-extra": "^7.0.0",
+    "moment": "^2.22.2",
+    "terminal-kit": "^1.26.2",
+    "yargs": "^12.0.1"
+  }
+}
