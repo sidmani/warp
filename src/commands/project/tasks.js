@@ -4,17 +4,20 @@ const moment = require('moment');
 
 function Tasks(project) {
   this.filepath = path.join(project.projectDir, 'tasks.json');
-  this.touch = project.touch;
+  this.touch = () => { project.touch() };
 }
 
 Tasks.defaultTasks = { open: {}, closed: {} };
 
 Tasks.prototype.load = function () {
-  this.tasks = JSON.parse(fs.readFileSync(this.filepath, 'utf8'));
+  return fs.readFile(this.filepath, 'utf8')
+    .then((f) => {
+      this.tasks = JSON.parse(f);
+    });
 };
 
 Tasks.prototype.save = function () {
-  fs.writeFileSync(this.filepath, JSON.stringify(this.tasks || Tasks.defaultTasks));
+  return fs.writeFile(this.filepath, JSON.stringify(this.tasks || Tasks.defaultTasks));
 };
 
 Tasks.prototype.listAll = function () {

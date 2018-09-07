@@ -10,6 +10,8 @@ const Log = require('./log');
 function Project(warpDir, name) {
   this.name = name;
   this.projectDir = path.join(warpDir, 'project', name);
+  this.indexPath = path.join(this.projectDir, 'index.json');
+
   this.log = new Log(this);
   this.tasks = new Tasks(this);
 }
@@ -19,23 +21,41 @@ Project.list = function (warpDir) {
 };
 
 Project.constructAll = function (warpDir) {
-  return Project.list(warpDir)
+  const pr = Project.list(warpDir)
     .map((n) => {
       const p = new Project(warpDir, n);
-      p.load();
-      return p;
-    })
-    .sort((a, b) => b.index.lastUpdated - a.index.lastUpdated);
+      return p.load();
+    });
+
+  return Promise.all(pr).then(p => p.sort((a, b) => b.index.lastUpdated - a.index.lastUpdated));
+};
+
+Project.prototype.loadIndex = function () {
+  return fs.readFile(this.indexPath, 'utf8')
+    .then((f) => {
+      this.index = JSON.parse(f);
+    });
 };
 
 Project.prototype.load = function () {
-  this.log.load();
-  this.tasks.load();
-  this.index = JSON.parse(fs.readFileSync(path.join(this.projectDir, 'index.json'), 'utf8'));
+  const p1 = this.log.load();
+  const p2 = this.tasks.load();
+  const p3 = this.loadIndex();
+  return Promise.all([p1, p2, p3]).then(() => this);
 };
 
 Project.prototype.touch = function () {
   this.index.lastUpdated = moment().unix();
+};
+
+Project.prototype.saveIndex = function () {
+  const now = moment().unix();
+  const index = this.index || {
+    created: now,
+    name: this.name,
+    lastUpdated: now,
+  };
+  return fs.writeFile(this.indexPath, JSON.stringify(index));
 };
 
 Project.prototype.save = function (overwrite = true) {
@@ -45,17 +65,10 @@ Project.prototype.save = function (overwrite = true) {
 
   fs.mkdirpSync(this.projectDir);
 
-  const now = moment().unix();
-  const index = this.index || {
-    created: now,
-    name: this.name,
-    lastUpdated: now,
-  };
-
-  fs.writeFileSync(path.join(this.projectDir, 'index.json'), JSON.stringify(index));
-
-  this.tasks.save();
-  this.log.save();
+  const p1 = this.saveIndex();
+  const p2 = this.tasks.save();
+  const p3 = this.log.save();
+  return Promise.all([p1, p2, p3]).then(() => this);
 };
 
 Project.prototype.status = function () {

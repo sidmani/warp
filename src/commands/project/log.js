@@ -10,11 +10,14 @@ function Log(project) {
 Log.defaultLog = {};
 
 Log.prototype.load = function () {
-  this.log = JSON.parse(fs.readFileSync(this.filepath, 'utf8'));
+  return fs.readFile(this.filepath, 'utf8')
+    .then((f) => {
+      this.log = JSON.parse(f);
+    });
 };
 
 Log.prototype.save = function () {
-  fs.writeFileSync(this.filepath, JSON.stringify(this.log || Log.defaultLog));
+  return fs.writeFile(this.filepath, JSON.stringify(this.log || Log.defaultLog));
 };
 
 Log.prototype.add = function (type, value, timestamp) {
