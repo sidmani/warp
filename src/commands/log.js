@@ -1,14 +1,11 @@
-const path = require('path');
-const moment = require('moment');
+const Project = require('./project/project');
 
-const touchProject = require('./config/touchProject');
-const addLog = require('./log/add');
-
-exports.command = 'log [project] [duration]';
+exports.command = 'log <project> <duration>';
 exports.describe = 'log an activity';
 
 exports.handler = function handler(argv) {
-  const projectDir = path.join(argv.warpDir, 'project', argv.project);
-  touchProject(argv.warpDir, argv.project, true);
-  addLog('work', argv.duration, moment(), projectDir);
+  const p = new Project(argv.warpDir, argv.project);
+  p.load();
+  p.addLog('work', argv.duration);
+  p.save();
 };

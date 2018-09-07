@@ -1,8 +1,11 @@
 {
-  "name": "warp",
+  "name": "warp-planner",
   "version": "0.0.1",
   "description": "get shit done for once",
   "main": "src/main.js",
+  "bin": {
+    "warp": "./src/main.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,9 +25,11 @@
     "tap": "^12.0.1"
   },
   "dependencies": {
+    "find-up": "^3.0.0",
     "fs-extra": "^7.0.0",
     "moment": "^2.22.2",
-    "terminal-heatmap": "0.0.2",
+    "terminal-heatmap": "^0.1.0",
+    "terminal-kit": "^1.26.2",
     "yargs": "^12.0.1"
   }
 }

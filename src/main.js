@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 
+const fu = require('find-up');
+
+const warpDir = fu.sync('.warp');
+
 const yargs = require('yargs')
-  .default('warpDir', '.warp', 'warp data directory')
+  .default('warpDir', warpDir)
   .commandDir('commands')
   .argv;

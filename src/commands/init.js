@@ -5,6 +5,6 @@ exports.command = 'init';
 exports.describe = 'get ready to do the things';
 
 exports.handler = function handler(argv) {
-  fs.mkdirpSync(argv.warpDir);
-  initConfig(argv.warpDir);
+  fs.mkdirpSync('.warp');
+  initConfig('.warp');
 };
