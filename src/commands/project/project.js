@@ -10,9 +10,23 @@ const Log = require('./log');
 function Project(warpDir, name) {
   this.name = name;
   this.projectDir = path.join(warpDir, 'project', name);
-  this.log = new Log(this.projectDir);
-  this.tasks = new Tasks(this.projectDir);
+  this.log = new Log(this);
+  this.tasks = new Tasks(this);
 }
+
+Project.list = function (warpDir) {
+  return fs.readdirSync(path.join(warpDir, 'project'));
+};
+
+Project.constructAll = function (warpDir) {
+  return Project.list(warpDir)
+    .map((n) => {
+      const p = new Project(warpDir, n);
+      p.load();
+      return p;
+    })
+    .sort((a, b) => b.index.lastUpdated - a.index.lastUpdated);
+};
 
 Project.prototype.load = function () {
   this.log.load();
@@ -44,24 +58,22 @@ Project.prototype.save = function (overwrite = true) {
   this.log.save();
 };
 
-Project.prototype.addLog = function (type, value) {
-  this.log.add(type, value, moment());
-  this.touch();
-};
-
-Project.prototype.addTask = function (msg, assigned, due) {
-  this.tasks.add(msg, assigned, due);
-  this.touch();
-};
-
 Project.prototype.status = function () {
+  term.clear();
+  term.insertLine(1);
   term.green.bgWhite(this.name);
   term.green(` last edited ${moment(this.index.lastUpdated * 1000).format('HH:mm MM-DD-YY')}\n`);
 
-  hm(this.log.grid(), '#ebedf0', '#196127', 0, 5);
-  term.underline.green('Tasks\n');
+  this.printGrid();
   const tasks = this.tasks.listOpen();
-  tasks.forEach(t => term.green(t.msg));
+  if (tasks.length > 0) {
+    term.underline.green('Tasks\n');
+    tasks.forEach(t => term.green(t.msg));
+  }
+};
+
+Project.prototype.printGrid = function () {
+  hm(this.log.grid(), '#ebedf0', '#196127', 0, 5);
 };
 
 module.exports = Project;

@@ -2,8 +2,9 @@ const fs = require('fs-extra');
 const path = require('path');
 const moment = require('moment');
 
-function Log(projectDir) {
-  this.filepath = path.join(projectDir, 'log.json');
+function Log(project) {
+  this.filepath = path.join(project.projectDir, 'log.json');
+  this.touch = () => { project.touch(); };
 }
 
 Log.defaultLog = {};
@@ -27,6 +28,8 @@ Log.prototype.add = function (type, value, timestamp) {
     type,
     value,
   });
+
+  this.touch();
 };
 
 Log.prototype.sumDay = function (timestamp) {
