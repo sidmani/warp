@@ -36,3 +36,5 @@ Tasks.prototype.add = function (msg, assigned, due) {
     due,
   });
 };
+
+module.exports = Tasks;
