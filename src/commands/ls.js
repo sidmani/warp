@@ -1,9 +1,12 @@
 const term = require('terminal-kit').terminal;
-const Project = require('../project/project');
+const Config = require('../config');
 
 exports.command = 'ls';
 exports.describe = 'list the things';
-exports.handler = function (argv) {
-  const ls = Project.list(argv.warpDir).map(n => `^#^w^b${n}^:`).join(' ');
-  term(`${ls}\n`);
+exports.handler = async function (argv) {
+  const c = new Config(argv.warpDir);
+  await c.loadIndex();
+  Object.values(c.config.modules).forEach((m) => {
+    term(`^#^w^b${m.name}^: ^w${m.type}^:\n`);
+  });
 };

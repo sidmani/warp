@@ -1,7 +1,7 @@
 const moment = require('moment');
-const Project = require('../project/project');
+const Config = require('../config');
 
-exports.command = 'log <project> <value>';
+exports.command = 'log <module> <value>';
 exports.describe = 'log an activity';
 exports.builder = {
   yesterday: {
@@ -10,19 +10,16 @@ exports.builder = {
     boolean: true,
     describe: 'log something yesterday',
   },
-  name: {
-    default: 'log',
-    alias: 'n',
-    describe: 'log to something other than the default log',
-  },
 };
 
-exports.handler = async function handler(argv) {
-  const p = new Project(argv.warpDir, argv.project);
-  await p.load();
+exports.handler = async function (argv) {
+  const c = new Config(argv.warpDir);
+  await c.loadIndex();
+  await c.loadModule(argv.module);
 
-  if (!p.index.modules[argv.name] || p.index.modules[argv.name].type !== 'log') {
-    throw new Error(`Cannot find module of type log with name "${argv.name}"`);
+
+  if (c.config.modules[argv.module].type !== 'log') {
+    throw new Error(`Cannot find module of type log with name "${argv.module}"`);
   }
 
   const m = moment();
@@ -31,6 +28,6 @@ exports.handler = async function handler(argv) {
   }
 
 
-  p.modules[argv.name].add('work', argv.value, m);
-  await p.save();
+  c.modules[argv.module].add('work', argv.value, m);
+  await c.save();
 };

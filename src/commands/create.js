@@ -1,9 +1,11 @@
-const Project = require('../project/project');
+const Config = require('../config');
 
-exports.command = 'create <name> [modules..]';
-exports.describe = 'make a project';
+exports.command = 'create <module> [name]';
+exports.describe = 'create a module';
 
 exports.handler = async function handler(argv) {
-  const p = new Project(argv.warpDir, argv.name);
-  await p.save();
+  const c = new Config(argv.warpDir);
+  await c.loadIndex();
+  c.addModule(argv.module, argv.name);
+  await c.save();
 };

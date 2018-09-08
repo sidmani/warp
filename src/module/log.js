@@ -4,10 +4,9 @@ const moment = require('moment');
 const hm = require('terminal-heatmap');
 const chalk = require('chalk');
 
-function Log(project, name) {
-  this.filepath = path.join(project.projectDir, `${name}.json`);
+function Log(moduleDir, name) {
+  this.filepath = path.join(moduleDir, `${name}.json`);
   this.name = name;
-  this.projectName = project.name;
 }
 
 Log.defaultLog = { entries: { } };
@@ -67,8 +66,8 @@ Log.prototype.grid = function (width = 52, center = moment()) {
   return arr;
 };
 
-Log.prototype.display = function (global = false) {
-  process.stdout.write(chalk.bgWhite.blue(`${this.projectName}/${this.name}`));
+Log.prototype.display = function () {
+  process.stdout.write(chalk.bgWhite.blue(`${this.name}`));
   process.stdout.write(chalk.white(' LOG\n'));
   hm(this.grid(), '#ebedf0', '#196127', 0, this.log.max || 1);
 };
