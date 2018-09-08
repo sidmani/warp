@@ -1,23 +1,22 @@
 const path = require('path');
-const fs = require('fs-extra');
 const moment = require('moment');
+const u = require('../util');
 
-function Tasks(project) {
-  this.filepath = path.join(project.projectDir, 'tasks.json');
-  this.touch = () => { project.touch() };
+function Tasks(project, name) {
+  this.filepath = path.join(project.projectDir, `${name}.json`);
 }
 
 Tasks.defaultTasks = { open: {}, closed: {} };
 
 Tasks.prototype.load = function () {
-  return fs.readFile(this.filepath, 'utf8')
+  return u.jsonLoad(this.filepath)
     .then((f) => {
-      this.tasks = JSON.parse(f);
+      this.tasks = f;
     });
 };
 
 Tasks.prototype.save = function () {
-  return fs.writeFile(this.filepath, JSON.stringify(this.tasks || Tasks.defaultTasks));
+  return u.jsonSave(this.filepath, this.tasks || Tasks.defaultTasks);
 };
 
 Tasks.prototype.listAll = function () {

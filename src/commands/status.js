@@ -1,7 +1,7 @@
 const term = require('terminal-kit').terminal;
 const moment = require('moment');
 
-const Project = require('./project/project');
+const Project = require('../project/project');
 
 exports.command = 'status [project]';
 exports.description = '';
@@ -20,16 +20,16 @@ function printLCR(str, styles) {
 }
 
 exports.handler = async function handler(argv) {
+  term.clear();
   if (argv.project) {
     const p = new Project(argv.warpDir, argv.project);
     await p.load();
-    p.status();
+    p.display();
     return;
   }
 
   const projects = await Project.constructAll(argv.warpDir);
 
-  term.clear();
   printCenter('WARP', '^#^w^g');
 
   projects.slice(0, 3).forEach((p) => {

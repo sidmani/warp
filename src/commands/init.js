@@ -4,7 +4,7 @@ const initConfig = require('./config/save.js');
 exports.command = 'init';
 exports.describe = 'get ready to do the things';
 
-exports.handler = function handler(argv) {
+exports.handler = function () {
   fs.mkdirpSync('.warp');
   initConfig('.warp');
 };

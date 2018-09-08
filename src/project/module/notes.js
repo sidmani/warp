@@ -1,23 +1,24 @@
 const fs = require('fs-extra');
 const path = require('path');
+const u = require('../util');
 
-function Notes(projectDir) {
-  this.dir = path.join(projectDir, 'notes');
+function Notes(project, name) {
+  this.dir = path.join(project.projectDir, name);
   this.filepath = path.join(this.dir, 'index.json');
 }
 
 Notes.defaultNotes = {};
 
 Notes.prototype.load = function () {
-  return fs.readFile(this.filePath, 'utf8')
+  return u.jsonLoad(this.filePath)
     .then((f) => {
-      this.index = JSON.parse(f);
+      this.index = f;
     });
 };
 
 Notes.prototype.save = function () {
   return fs.mkdirp(this.dir)
-    .then(() => fs.writeFile(this.filepath, JSON.stringify(this.index || Notes.defaultNotes)));
+    .then(() => u.jsonSave(this.filepath, this.index || Notes.defaultNotes));
 };
 
 module.exports = Notes;

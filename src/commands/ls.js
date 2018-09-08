@@ -1,5 +1,5 @@
 const term = require('terminal-kit').terminal;
-const Project = require('./project/project');
+const Project = require('../project/project');
 
 exports.command = 'ls';
 exports.describe = 'list the things';
