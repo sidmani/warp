@@ -1,4 +1,5 @@
 const Project = require('../project/project');
+const Config = require('../config');
 
 exports.command = 'set-display [array..]';
 exports.description = 'set the display format for project status';
@@ -11,12 +12,14 @@ exports.builder = {
 };
 
 exports.handler = async function (argv) {
+  let p;
   if (argv.project) {
-    const p = new Project(argv.warpDir, argv.project);
-    await p.load();
-    p.setDisplay(argv.array);
-    await p.save();
-    return;
+    p = new Project(argv.warpDir, argv.project);
+  } else {
+    p = new Config(argv.warpDir);
   }
-  // set display in config
+
+  await p.load();
+  p.setDisplay(argv.array);
+  await p.save();
 };

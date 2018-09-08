@@ -1,10 +1,11 @@
 const fs = require('fs-extra');
-const initConfig = require('./config/save.js');
+const Config = require('../config');
 
 exports.command = 'init';
 exports.describe = 'get ready to do the things';
 
-exports.handler = function () {
+exports.handler = async function () {
   fs.mkdirpSync('.warp');
-  initConfig('.warp');
+  const c = new Config('.warp');
+  await c.save();
 };

@@ -1,13 +1,11 @@
 const path = require('path');
 const fs = require('fs-extra');
 const moment = require('moment');
-const term = require('terminal-kit').terminal;
+const chalk = require('chalk');
+const modules = require('./module');
 
 const u = require('./util');
-const tasks = require('./module/tasks');
-const log = require('./module/log');
 
-const availableModules = { tasks, log };
 
 function Project(warpDir, name) {
   this.name = name;
@@ -21,7 +19,7 @@ Project.prototype.addModule = function (type, name = type) {
     throw new Error(`Module name ${name} is already in use`);
   }
 
-  if (!availableModules[type]) {
+  if (!modules[type]) {
     throw new Error(`Unknown module type ${type}`);
   }
 
@@ -30,7 +28,7 @@ Project.prototype.addModule = function (type, name = type) {
     type,
   };
 
-  this.modules[name] = new availableModules[type](this, name);
+  this.modules[name] = new modules[type](this, name);
 };
 
 Project.prototype.setDisplay = function (arr) {
@@ -52,18 +50,23 @@ Project.prototype.loadIndex = function () {
   return u.jsonLoad(this.indexPath)
     .then((f) => {
       this.index = f;
-    });
+    })
+    .then(() => this);
 };
 
 Project.prototype.load = function () {
   return this.loadIndex()
-    .then(() => {
-      Object.values(this.index.modules).forEach((m) => {
-        this.modules[m.name] = (new availableModules[m.type](this, m.name));
-      });
-    })
-    .then(() => Promise.all(Object.values(this.modules).map(m => m.load())))
+    .then(() => Promise.all(Object.keys(this.index.modules).map(k => this.loadModule(k))))
     .then(() => this);
+};
+
+Project.prototype.loadModule = function (name) {
+  const m = this.index.modules[name];
+  if (!m) {
+    throw new Error(`Cannot find module ${name}`);
+  }
+  this.modules[name] = new modules[m.type](this, name);
+  return this.modules[name].load();
 };
 
 Project.prototype.saveIndex = function () {
@@ -91,6 +94,7 @@ Project.prototype.save = function (overwrite = true) {
 };
 
 Project.prototype.display = function () {
+  process.stdout.write(chalk.bgWhite.green(`${this.name}\n`));
   this.index.display.forEach(n => this.modules[n].display());
 };
 
