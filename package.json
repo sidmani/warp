@@ -1,6 +1,6 @@
 {
   "name": "warp-planner",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "get shit done for once",
   "main": "src/main.js",
   "bin": {
