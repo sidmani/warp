@@ -65,9 +65,20 @@ Config.prototype.addModule = function (type, name = type) {
 };
 
 Config.prototype.rmModule = function (name) {
+  // delete module record
   delete this.config.modules[name];
+
+  // invoke module deletion handler
   const p = this.modules[name].delete();
+
+  // delete module object
   delete this.modules[name];
+
+  // remove module from any views it's in
+  Object.keys(this.config.views).forEach((n) => {
+    this.config.views[n] = this.config.views[n].filter(o => o !== name);
+  });
+
   return p;
 };
 
