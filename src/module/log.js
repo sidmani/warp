@@ -9,7 +9,10 @@ function Log(moduleDir, name) {
   this.name = name;
 }
 
-Log.defaultLog = { entries: { } };
+Log.defaultLog = {
+  color: '#196127',
+  entries: { },
+};
 
 Log.prototype.load = function () {
   return fs.readFile(this.filepath, 'utf8')
@@ -67,9 +70,16 @@ Log.prototype.grid = function (width = 52, center = moment()) {
 };
 
 Log.prototype.display = function () {
-  process.stdout.write(chalk.bgWhite.blue(`${this.name}`));
+  hm(this.grid(), '#ebedf0', this.log.color, 0, this.log.max || 1);
+};
+
+Log.prototype.displayName = function () {
+  process.stdout.write(chalk.bgWhite.hex(this.log.color)(`${this.name}`));
   process.stdout.write(chalk.white(' LOG\n'));
-  hm(this.grid(), '#ebedf0', '#196127', 0, this.log.max || 1);
+};
+
+Log.prototype.configure = function (argv) {
+  if (argv.color) { this.log.color = argv.color; }
 };
 
 module.exports = Log;

@@ -1,5 +1,5 @@
 const moment = require('moment');
-const Config = require('../config');
+const Config = require('../../config');
 
 exports.command = 'log <module> <value>';
 exports.describe = 'log an activity';

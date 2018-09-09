@@ -1,27 +1,28 @@
-const term = require('terminal-kit').terminal;
-
-const Config = require('../config');
+const chalk = require('chalk');
+const term = require('terminal-kit').terminal
 
 exports.command = ['view [name]', '$0'];
 exports.description = '';
 
 function printCenter(str, style = '') {
-  const pad = ''.padStart(Math.floor((term.width - str.length) / 2));
-  term(`${pad}${style}${str}^:${pad}\n`);
+  const pad = ''.padStart(Math.floor((process.stdout.columns - str.length) / 2));
+  process.stdout.write(chalk`${pad}{${style} ${str}}${pad}\n`);
 }
 
 exports.handler = async function handler(argv) {
   term.clear();
-  printCenter('WARP', '^#^w^g');
+  printCenter('WARP', 'bgWhite.green');
+  await argv.config.loadIndex();
 
   const view = argv.name || 'default';
-  const c = new Config(argv.warpDir);
-  await c.loadIndex();
-  const m = c.config.views[view];
+  const m = argv.config.config.views[view];
   if (!m) {
     throw new Error(`Unknown view "${view}"`);
   }
 
-  const loaded = await Promise.all(m.map(n => c.loadModule(n)));
-  loaded.forEach(o => o.display());
+  const loaded = await Promise.all(m.map(n => argv.config.loadModule(n)));
+  loaded.forEach((o) => {
+    o.display();
+    process.stdout.write('\n');
+  });
 };
