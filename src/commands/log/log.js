@@ -1,33 +1,37 @@
 const moment = require('moment');
-const Config = require('../../config');
 
-exports.command = 'log <module> <value>';
+exports.command = 'log';
 exports.describe = 'log an activity';
-exports.builder = {
-  yesterday: {
-    default: false,
-    alias: 'y',
-    boolean: true,
-    describe: 'log something yesterday',
-  },
-};
 
-exports.handler = async function (argv) {
-  const c = new Config(argv.warpDir);
+async function setup(argv) {
+  const c = argv.config;
   await c.loadIndex();
   await c.loadModule(argv.module);
-
 
   if (c.config.modules[argv.module].type !== 'log') {
     throw new Error(`Cannot find module of type log with name "${argv.module}"`);
   }
 
-  const m = moment();
-  if (argv.yesterday) {
-    m.subtract(1, 'days');
-  }
+  return moment(argv.day, 'MM-DD-YYYY');
+}
 
+async function add(argv) {
+  const m = await setup(argv);
+  argv.config.modules[argv.module].add('work', argv.value, m);
+  await argv.config.save();
+}
 
-  c.modules[argv.module].add('work', argv.value, m);
-  await c.save();
+async function clear(argv) {
+  const m = await setup(argv);
+  argv.config.modules[argv.module].clear(m);
+  await argv.config.save();
+}
+
+exports.builder = function (yargs) {
+  return yargs.command(['add <module> <value>', '$0'], 'log something', {}, add)
+    .command('clear <module>', 'clear the log', {}, clear)
+    .option('day', {
+      alias: 'd',
+      default: moment().format('MM-DD-YYYY'),
+    });
 };

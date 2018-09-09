@@ -48,6 +48,22 @@ Log.prototype.add = function (type, value, timestamp) {
   }
 };
 
+Log.prototype.recalculateMax = function () {
+  delete this.log.max;
+  Object.keys(this.log.entries).forEach((timestamp) => {
+    const sum = this.sumDay(timestamp);
+    if (!this.log.max || sum > this.log.max) {
+      this.log.max = sum;
+    }
+  });
+};
+
+Log.prototype.clear = function (timestamp) {
+  const today = Math.floor(timestamp.startOf('day').unix() / 86400);
+  delete this.log.entries[today];
+  this.recalculateMax();
+};
+
 Log.prototype.sumDay = function (timestamp) {
   return this.log.entries[timestamp].reduce((a, e) => a + e.value, 0);
 };
