@@ -64,8 +64,20 @@ Config.prototype.addModule = function (type, name = type) {
   this.modules[name] = new modules[type](this.moduleDir, name);
 };
 
-Config.prototype.addView = function (name, arr) {
-  this.config.views[name] = arr;
+Config.prototype.setView = function (name, arr) {
+  if (arr.length === 0) {
+    this.config.views[name] = undefined;
+  } else {
+    this.config.views[name] = arr;
+  }
+};
+
+Config.prototype.addModuleToView = function (name, arr) {
+  if (this.config.views[name]) {
+    this.config.views[name] = this.config.views[name].concat(arr);
+  } else {
+    this.config.views[name] = arr;
+  }
 };
 
 module.exports = Config;

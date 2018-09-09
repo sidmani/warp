@@ -70,6 +70,7 @@ Log.prototype.grid = function (width = 52, center = moment()) {
 };
 
 Log.prototype.display = function () {
+  this.displayName();
   hm(this.grid(), '#ebedf0', this.log.color, 0, this.log.max || 1);
 };
 
