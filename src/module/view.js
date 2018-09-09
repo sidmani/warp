@@ -39,7 +39,7 @@ View.prototype.displayName = function () {
 
 View.prototype.displayList = function () {
   this.displayName();
-  this.loadAllModules().then((modules) => {
+  return this.loadAllModules().then((modules) => {
     modules.forEach((m) => {
       process.stdout.write('↳ ');
       m.displayName();

@@ -1,8 +1,14 @@
 const chalk = require('chalk');
 const term = require('terminal-kit').terminal;
 
-exports.command = ['view [name]', '$0'];
-exports.description = '';
+exports.command = ['view', '$0'];
+exports.description = 'display a module';
+
+exports.builder = function (yargs) {
+  return yargs.positional('module', {
+    default: 'default',
+  });
+};
 
 function printCenter(str, style = '') {
   const pad = ''.padStart(Math.floor((process.stdout.columns - str.length) / 2));
@@ -13,6 +19,6 @@ exports.handler = async function handler(argv) {
   term.clear();
   printCenter('WARP', 'bgWhite.green');
   await argv.config.loadIndex();
-  await argv.config.loadModule(argv.name);
-  argv.config.modules[argv.name].display();
+  await argv.config.loadModule(argv.module);
+  await argv.config.modules[argv.module].display();
 };
