@@ -9,7 +9,6 @@ function Config(warpDir) {
 }
 
 Config.defaultConfig = {
-  views: {},
   modules: {},
 };
 
@@ -26,7 +25,7 @@ Config.prototype.loadModule = function (name) {
     throw new Error(`Cannot find module "${name}"`);
   }
 
-  this.modules[name] = new modules[m.type](this.moduleDir, name);
+  this.modules[name] = new modules[m.type](this.moduleDir, name, this);
   return this.modules[name].load();
 };
 
@@ -75,27 +74,11 @@ Config.prototype.rmModule = function (name) {
   delete this.modules[name];
 
   // remove module from any views it's in
-  Object.keys(this.config.views).forEach((n) => {
-    this.config.views[n] = this.config.views[n].filter(o => o !== name);
-  });
+//  Object.keys(this.config.views).forEach((n) => {
+//    this.config.views[n] = this.config.views[n].filter(o => o !== name);
+//  });
 
   return p;
-};
-
-Config.prototype.setView = function (name, arr) {
-  if (arr.length === 0) {
-    this.config.views[name] = undefined;
-  } else {
-    this.config.views[name] = arr;
-  }
-};
-
-Config.prototype.addModuleToView = function (name, arr) {
-  if (this.config.views[name]) {
-    this.config.views[name] = this.config.views[name].concat(arr);
-  } else {
-    this.config.views[name] = arr;
-  }
 };
 
 module.exports = Config;
