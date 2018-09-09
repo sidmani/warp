@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 const term = require('terminal-kit').terminal;
 
-exports.command = ['view', '$0'];
+exports.command = ['view [module]', '$0'];
 exports.description = 'display a module';
 
 exports.builder = function (yargs) {
