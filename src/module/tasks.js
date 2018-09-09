@@ -1,3 +1,4 @@
+const fs = require('fs-extra');
 const path = require('path');
 const moment = require('moment');
 const chalk = require('chalk');
@@ -20,6 +21,10 @@ Tasks.prototype.load = function () {
 
 Tasks.prototype.save = function () {
   return u.jsonSave(this.filepath, this.tasks || Tasks.defaultTasks);
+};
+
+Tasks.prototype.delete = function () {
+  return fs.remove(this.filepath);
 };
 
 Tasks.prototype.listAll = function () {

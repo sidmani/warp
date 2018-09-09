@@ -26,6 +26,10 @@ Log.prototype.save = function () {
   return fs.writeFile(this.filepath, JSON.stringify(this.log || Log.defaultLog));
 };
 
+Log.prototype.delete = function () {
+  return fs.remove(this.filepath);
+};
+
 Log.prototype.add = function (type, value, timestamp) {
   const today = Math.floor(timestamp.startOf('day').unix() / 86400);
 

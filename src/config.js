@@ -64,6 +64,13 @@ Config.prototype.addModule = function (type, name = type) {
   this.modules[name] = new modules[type](this.moduleDir, name);
 };
 
+Config.prototype.rmModule = function (name) {
+  delete this.config.modules[name];
+  const p = this.modules[name].delete();
+  delete this.modules[name];
+  return p;
+};
+
 Config.prototype.setView = function (name, arr) {
   if (arr.length === 0) {
     this.config.views[name] = undefined;
