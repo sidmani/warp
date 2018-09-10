@@ -1,7 +1,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 const moment = require('moment');
-const hm = require('terminal-heatmap');
+//const hm = require('terminal-heatmap');
+const hm = require('../../../heatmap');
 const chalk = require('chalk');
 
 function Log(moduleDir, name) {
@@ -78,8 +79,8 @@ Log.prototype.grid = function (width = 52, center = moment()) {
   const dayOfWeek = center.day();
   const minimumDay = centerTimestamp - Math.floor(width / 2) * 7 - dayOfWeek;
   const maximumDay = minimumDay + width * 7;
-
-  Object.keys(this.log.entries).forEach((key) => {
+  Object.keys(this.log.entries).forEach((k) => {
+    const key = parseInt(k, 10);
     if (key > minimumDay && key < maximumDay) {
       const daysSinceMinimum = key - minimumDay;
       arr[daysSinceMinimum % 7][Math.floor(daysSinceMinimum / 7)] = this.sumDay(key);

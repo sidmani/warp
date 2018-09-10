@@ -24,7 +24,7 @@ Config.prototype.loadModule = function (name) {
   if (!m) {
     throw new Error(`Cannot find module "${name}"`);
   }
-
+  if (this.modules[name]) { return Promise.resolve(this.modules[name]); }
   this.modules[name] = new modules[m.type](this.moduleDir, name, this);
   return this.modules[name].load();
 };
