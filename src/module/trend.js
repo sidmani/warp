@@ -38,8 +38,8 @@ class Trend extends BaseModule {
         color = this.index.colors[1 + Math.sign(val - this.index.values[idx - 1])];
       }
       const paddedValue = `${val}`.padStart(3, ' ');
-      return chalk`{hex('${color}') ${paddedValue}}`;
-    }).join(' | ');
+      return chalk`{hex('${color}').bgWhite ${paddedValue}}`;
+    }).join(' ');
     process.stdout.write(chalk`{bgWhite.green ${this.name}}${padding}\t${str}\n`);
   }
 }
