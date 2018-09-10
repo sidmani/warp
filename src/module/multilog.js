@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 const path = require('path');
+const hm = require('terminal-heatmap');
 const View = require('./view');
-const hm = require('../../../heatmap');
 
 function Multilog(moduleDir, name, config) {
   this.filepath = path.join(moduleDir, `${name}.json`);

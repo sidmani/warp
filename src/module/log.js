@@ -1,8 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const moment = require('moment');
-//const hm = require('terminal-heatmap');
-const hm = require('../../../heatmap');
+const hm = require('terminal-heatmap');
 const chalk = require('chalk');
 
 function Log(moduleDir, name) {
