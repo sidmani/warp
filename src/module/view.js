@@ -28,8 +28,10 @@ View.prototype.loadAllModules = function () {
 };
 
 View.prototype.display = function () {
-  return this.loadAllModules().then((modules) => {
-    modules.forEach(m => m.display());
+  return this.loadAllModules().then(async (modules) => {
+    for (m of modules) {
+      await m.display();
+    }
   });
 };
 
