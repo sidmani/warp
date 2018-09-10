@@ -5,7 +5,7 @@ exports.description = 'create a new task';
 
 exports.handler = async function (argv) {
   const c = new Config(argv.warpDir);
-  await c.loadIndex();
+  await c.load();
   await c.loadModule(argv.module);
   c.modules[argv.module].add(argv.msg);
   await c.save();

@@ -1,48 +1,34 @@
-const fs = require('fs-extra');
 const path = require('path');
 const moment = require('moment');
 const chalk = require('chalk');
-const u = require('../util');
+const BaseModule = require('./base');
 
-function Tasks(moduleDir, name) {
-  this.filepath = path.join(moduleDir, `${name}.json`);
-  this.name = name;
+
+class Tasks extends BaseModule {
+  constructor(moduleDir, name) {
+    super(name);
+    this.filepath = path.join(moduleDir, `${name}.json`);
+  }
 }
 
-Tasks.defaultTasks = { open: {}, closed: {} };
-
-Tasks.prototype.load = function () {
-  return u.jsonLoad(this.filepath)
-    .then((f) => {
-      this.tasks = f;
-    })
-    .then(() => this);
-};
-
-Tasks.prototype.save = function () {
-  return u.jsonSave(this.filepath, this.tasks || Tasks.defaultTasks);
-};
-
-Tasks.prototype.delete = function () {
-  return fs.remove(this.filepath);
-};
+Tasks.defaultIndex = { open: {}, closed: {} };
 
 Tasks.prototype.listAll = function () {
-  return Object.values(this.tasks.open).concat(Object.values(this.tasks.closed));
+  return Object.values(this.index.open).concat(Object.values(this.index.closed));
 };
 
 Tasks.prototype.listOpen = function () {
-  return this.tasks.open;
+  return this.index.open;
 };
 
 Tasks.prototype.listClosed = function () {
-  return this.tasks.closed;
+  return this.index.closed;
 };
 
 Tasks.prototype.add = function (msg, assigned, due) {
   const now = moment().valueOf();
   const id = now.toString(16).slice(6);
-  this.tasks.open[id] = {
+  this.index.open[id] = {
     id,
     created: Math.floor(now / 1000),
     msg,
@@ -52,28 +38,28 @@ Tasks.prototype.add = function (msg, assigned, due) {
 };
 
 Tasks.prototype.assign = function (id, m) {
-  this.tasks.open[id].assigned = m && m.valueOf();
+  this.index.open[id].assigned = m && m.valueOf();
 };
 
 Tasks.prototype.due = function (id, m) {
-  this.tasks.open[id].due = m && m.valueOf();
+  this.index.open[id].due = m && m.valueOf();
 };
 
 Tasks.prototype.close = function (id) {
-  const t = this.tasks.open[id];
-  if (!t && this.tasks.closed[id]) {
+  const t = this.index.open[id];
+  if (!t && this.index.closed[id]) {
     throw new Error(`Task with id ${id} is already closed`);
   } else if (!t) {
     throw new Error(`Task with id ${id} does not exist`);
   }
   t.completed = moment().valueOf();
-  this.tasks.closed[id] = t;
-  this.tasks.open[id] = undefined;
+  this.index.closed[id] = t;
+  this.index.open[id] = undefined;
 };
 
 Tasks.prototype.display = function () {
   this.displayName();
-  Object.values(this.tasks.open).forEach((t) => {
+  Object.values(this.index.open).forEach((t) => {
     process.stdout.write(chalk`{red [ ]} {red.bgWhite ${t.id}} `);
     const now = moment();
     if (t.assigned) {
@@ -98,7 +84,7 @@ Tasks.prototype.display = function () {
     }
     process.stdout.write(`${t.msg}\n`);
   });
-  Object.values(this.tasks.closed).forEach((t) => {
+  Object.values(this.index.closed).forEach((t) => {
     process.stdout.write(chalk`{green [X]} {green.bgWhite ${t.id}} ${t.msg}\n`);
   });
 };

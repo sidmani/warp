@@ -1,27 +1,16 @@
 const path = require('path');
-const fs = require('fs-extra');
 const chalk = require('chalk');
-const u = require('../util');
+const BaseModule = require('./base');
 
-function View(moduleDir, name, config) {
-  this.filepath = path.join(moduleDir, `${name}.json`);
-  this.loader = n => config.loadModule(n);
-  this.name = name;
+class View extends BaseModule {
+  constructor(moduleDir, name, config) {
+    super(name);
+    this.filepath = path.join(moduleDir, `${name}.json`);
+    this.loader = n => config.loadModule(n);
+  }
 }
 
-View.defaultView = { modules: [] };
-
-View.prototype.save = function () {
-  return u.jsonSave(this.filepath, this.index || View.defaultView);
-};
-
-View.prototype.load = function () {
-  return u.jsonLoad(this.filepath)
-    .then((f) => {
-      this.index = f;
-    })
-    .then(() => this);
-};
+View.defaultIndex = { modules: [] };
 
 View.prototype.loadAllModules = function () {
   return Promise.all(this.index.modules.map(m => this.loader(m)));
@@ -35,22 +24,16 @@ View.prototype.display = function () {
   });
 };
 
-View.prototype.displayName = function () {
+View.prototype.displayName = function (options = {}) {
   process.stdout.write(chalk`{blue.bgWhite ${this.name}} {white VIEW}\n`);
-};
-
-View.prototype.displayList = function () {
-  this.displayName();
-  return this.loadAllModules().then((modules) => {
-    modules.forEach((m) => {
-      process.stdout.write('↳ ');
-      m.displayName();
+  if (options.nest) {
+    return this.loadAllModules().then((modules) => {
+      modules.forEach((m) => {
+        process.stdout.write('↳ ');
+        m.displayName();
+      });
     });
-  });
-};
-
-View.prototype.delete = function () {
-  return fs.remove(this.filepath);
+  }
 };
 
 View.prototype.configure = function (argv) {

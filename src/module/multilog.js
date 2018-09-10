@@ -17,15 +17,15 @@ Multilog.prototype.displayName = function () {
 
 Multilog.prototype.display = function () {
   return this.loadAllModules().then((modules) => {
-    const str = modules.map(m => chalk`{bgWhite.hex('${m.log.color}') ${m.name}}`).join(' + ');
-    process.stdout.write(chalk`{bgWhite.blue ${this.name}} {white MULTI-LOG} ${str}\n`);
+    const str = modules.map(m => chalk`{bgWhite.hex('${m.index.color}') ${m.name}}`).join(' + ');
+    process.stdout.write(chalk`${str} {white MULTI-LOG}\n`);
     const grids = modules.map(m => m.grid());
     grids.forEach((grid, index) => {
       grid.forEach((row, rowNum) => {
         row.forEach((value, colNum) => {
           grids[0][rowNum][colNum] = {
             value,
-            color: modules[index].log.color,
+            color: modules[index].index.color,
             max: modules[index].max,
           };
         });

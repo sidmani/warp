@@ -12,12 +12,8 @@ exports.builder = {
 exports.handler = async function (argv) {
   await argv.config.load();
   if (argv.view) {
-    const views = Object.entries(argv.config.config.modules)
-      .filter(([, { type }]) => type === 'view');
-    for (const [v] of views) {
-      await argv.config.modules[v].displayList();
-    }
+    await argv.config.display(({ type }) => type === 'view', { nest: true });
   } else {
-    Object.values(argv.config.modules).forEach(m => m.displayName());
+    await argv.config.display();
   }
 };

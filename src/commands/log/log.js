@@ -5,7 +5,7 @@ exports.describe = 'log an activity';
 
 async function setup(argv) {
   const c = argv.config;
-  await c.loadIndex();
+  await c.load();
   await c.loadModule(argv.module);
 
   if (c.config.modules[argv.module].type !== 'log') {
