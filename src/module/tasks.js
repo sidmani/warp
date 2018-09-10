@@ -1,7 +1,7 @@
 const path = require('path');
 const moment = require('moment');
 const chalk = require('chalk');
-const BaseModule = require('./base');
+const BaseModule = require('../base');
 
 
 class Tasks extends BaseModule {

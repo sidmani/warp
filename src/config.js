@@ -1,6 +1,5 @@
 const path = require('path');
-const modules = require('./module');
-const BaseModule = require('./module/base.js');
+const BaseModule = require('./base');
 
 class Config extends BaseModule {
   constructor(warpDir) {
@@ -15,13 +14,17 @@ Config.defaultIndex = {
   modules: {},
 };
 
+function moduleType(type) {
+  return require(`./module/${type}.js`);
+}
+
 Config.prototype.loadModule = function (name) {
   const m = this.index.modules[name];
   if (!m) {
     throw new Error(`Cannot find module "${name}"`);
   }
   if (this.modules[name]) { return Promise.resolve(this.modules[name]); }
-  this.modules[name] = new modules[m.type](this.moduleDir, name, this);
+  this.modules[name] = new (moduleType(m.type))(this.moduleDir, name, this);
   return this.modules[name].load();
 };
 
@@ -36,7 +39,8 @@ Config.prototype.addModule = function (type, name = type) {
     throw new Error(`Module with name "${name}" already exists`);
   }
 
-  if (!modules[type]) {
+  const constructor = moduleType(type);
+  if (!constructor) {
     throw new Error(`Unknown module type "${type}"`);
   }
 
@@ -45,7 +49,7 @@ Config.prototype.addModule = function (type, name = type) {
     type,
   };
 
-  this.modules[name] = new modules[type](this.moduleDir, name);
+  this.modules[name] = new constructor(this.moduleDir, name);
 };
 
 Config.prototype.rmModule = function (name) {
@@ -58,11 +62,6 @@ Config.prototype.rmModule = function (name) {
   // delete module object
   delete this.modules[name];
 
-  // remove module from any views it's in
-//  Object.keys(this.index.views).forEach((n) => {
-//    this.index.views[n] = this.index.views[n].filter(o => o !== name);
-//  });
-
   return p;
 };
 
@@ -71,7 +70,9 @@ Config.prototype.display = async function (filter = () => true, options) {
     .filter(filter)
     .map(({ name }) => this.loadModule(name));
   const ms = await Promise.all(needs);
-  ms.forEach(m => m.displayName(options));
+  for (m of ms) {
+    await m.displayName(options);
+  }
 };
 
 module.exports = Config;

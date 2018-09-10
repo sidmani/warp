@@ -1,9 +1,8 @@
-const fs = require('fs-extra');
 const path = require('path');
 const moment = require('moment');
 const hm = require('terminal-heatmap');
 const chalk = require('chalk');
-const BaseModule = require('./base');
+const BaseModule = require('../base');
 
 
 class Log extends BaseModule {

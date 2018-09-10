@@ -1,5 +1,5 @@
 const path = require('path');
-const BaseModule = require('./base');
+const BaseModule = require('../base');
 
 class Notes extends BaseModule {
   constructor(project, name) {

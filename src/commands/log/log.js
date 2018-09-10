@@ -3,28 +3,26 @@ const moment = require('moment');
 exports.command = 'log';
 exports.describe = 'log an activity';
 
-async function setup(argv) {
-  const c = argv.config;
-  await c.load();
-  await c.loadModule(argv.module);
+async function setup({ config, module, day }) {
+  await config.loadModule(module);
 
-  if (c.config.modules[argv.module].type !== 'log') {
-    throw new Error(`Cannot find module of type log with name "${argv.module}"`);
+  if (config.modules[module].type !== 'log') {
+    throw new Error(`Cannot find module of type log with name "${module}"`);
   }
 
-  return moment(argv.day, 'MM-DD-YYYY');
+  return moment(day, 'MM-DD-YYYY');
 }
 
 async function add(argv) {
   const m = await setup(argv);
   argv.config.modules[argv.module].add('work', argv.value, m);
-  await argv.config.save();
+  await argv.config.saveAll();
 }
 
 async function clear(argv) {
   const m = await setup(argv);
   argv.config.modules[argv.module].clear(m);
-  await argv.config.save();
+  await argv.config.saveAll();
 }
 
 exports.builder = function (yargs) {

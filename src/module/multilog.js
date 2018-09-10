@@ -1,15 +1,8 @@
 const chalk = require('chalk');
-const path = require('path');
 const hm = require('terminal-heatmap');
 const View = require('./view');
 
-function Multilog(moduleDir, name, config) {
-  this.filepath = path.join(moduleDir, `${name}.json`);
-  this.loader = n => config.loadModule(n);
-  this.name = name;
-}
-
-Multilog.prototype = Object.create(View.prototype);
+class Multilog extends View { }
 
 Multilog.prototype.displayName = function () {
   process.stdout.write(chalk`{blue.bgWhite ${this.name}} {white MULTI-LOG}\n`);

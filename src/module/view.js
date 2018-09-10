@@ -1,6 +1,6 @@
 const path = require('path');
 const chalk = require('chalk');
-const BaseModule = require('./base');
+const BaseModule = require('../base');
 
 class View extends BaseModule {
   constructor(moduleDir, name, config) {
@@ -24,14 +24,14 @@ View.prototype.display = function () {
   });
 };
 
-View.prototype.displayName = function (options = {}) {
+View.prototype.displayName = async function (options = {}) {
   process.stdout.write(chalk`{blue.bgWhite ${this.name}} {white VIEW}\n`);
   if (options.nest) {
-    return this.loadAllModules().then((modules) => {
-      modules.forEach((m) => {
+    return this.loadAllModules().then(async (modules) => {
+      for (m of modules) {
         process.stdout.write('↳ ');
-        m.displayName();
-      });
+        await m.displayName();
+      }
     });
   }
 };

@@ -1,3 +1,4 @@
 extends: airbnb-base
 rules:
+  import/no-dynamic-require: off
   func-names: off

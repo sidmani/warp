@@ -15,15 +15,20 @@ exports.builder = {
   },
 };
 
-exports.handler = async function (argv) {
-  await argv.config.loadIndex();
-  await argv.config.loadModule(argv.module);
-  const date = moment(argv.date, 'MM-DD-YYYY');
-  const module = argv.config.modules[argv.module];
-  if (argv.due) {
-    module.due(argv.task, date);
+exports.handler = async function ({
+  config,
+  module,
+  date,
+  due,
+  task,
+}) {
+  await config.loadModule(module);
+  const m = moment(date, 'MM-DD-YYYY');
+  const mod = config.modules[module];
+  if (due) {
+    mod.due(task, m);
   } else {
-    module.assign(argv.task, date);
+    mod.assign(task, m);
   }
-  await argv.config.save();
+  await config.saveAll();
 };

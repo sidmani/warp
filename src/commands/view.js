@@ -12,10 +12,9 @@ function printCenter(str, style = '') {
   process.stdout.write(chalk`${pad}{${style} ${str}}${pad}\n`);
 }
 
-exports.handler = async function handler(argv) {
+exports.handler = async function handler({ config, module }) {
   process.stdout.write('\x1Bc');
   printCenter('WARP', 'bgWhite.green');
-  await argv.config.load();
-  await argv.config.loadModule(argv.module);
-  await argv.config.modules[argv.module].display();
+  await config.loadModule(module);
+  await config.modules[module].display();
 };

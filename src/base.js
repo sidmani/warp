@@ -10,6 +10,10 @@ class BaseModule {
       .then((f) => {
         this.index = f;
       })
+      .catch((e) => {
+        console.log('no file, will create');
+        this.index = this.constructor.defaultIndex;
+      })
       .then(() => this);
   }
 
