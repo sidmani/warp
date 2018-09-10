@@ -1,5 +1,4 @@
 const chalk = require('chalk');
-const term = require('terminal-kit').terminal;
 
 exports.command = ['view [module]', '$0'];
 exports.description = 'display a module';
@@ -16,7 +15,7 @@ function printCenter(str, style = '') {
 }
 
 exports.handler = async function handler(argv) {
-  term.clear();
+  process.stdout.write('\x1Bc');
   printCenter('WARP', 'bgWhite.green');
   await argv.config.loadIndex();
   await argv.config.loadModule(argv.module);

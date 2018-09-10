@@ -51,6 +51,14 @@ Tasks.prototype.add = function (msg, assigned, due) {
   };
 };
 
+Tasks.prototype.assign = function (id, m) {
+  this.tasks.open[id].assigned = m && m.valueOf();
+};
+
+Tasks.prototype.due = function (id, m) {
+  this.tasks.open[id].due = m && m.valueOf();
+};
+
 Tasks.prototype.close = function (id) {
   const t = this.tasks.open[id];
   if (!t && this.tasks.closed[id]) {
@@ -58,7 +66,7 @@ Tasks.prototype.close = function (id) {
   } else if (!t) {
     throw new Error(`Task with id ${id} does not exist`);
   }
-  t.completed = moment.unix();
+  t.completed = moment().valueOf();
   this.tasks.closed[id] = t;
   this.tasks.open[id] = undefined;
 };
@@ -66,7 +74,29 @@ Tasks.prototype.close = function (id) {
 Tasks.prototype.display = function () {
   this.displayName();
   Object.values(this.tasks.open).forEach((t) => {
-    process.stdout.write(chalk`{red [ ]} {red.bgWhite ${t.id}} ${t.msg}\n`);
+    process.stdout.write(chalk`{red [ ]} {red.bgWhite ${t.id}} `);
+    const now = moment();
+    if (t.assigned) {
+      const m = moment(t.assigned);
+      let style;
+      if (m.isSameOrAfter(now, 'day')) {
+        style = 'blue.bgWhite';
+      } else {
+        style = 'white.bgRed';
+      }
+      process.stdout.write(chalk`{${style} ☯ ${m.format('MM-DD-YYYY')}} `);
+    }
+    if (t.due) {
+      const m = moment(t.due);
+      let style;
+      if (m.isSameOrAfter(now, 'day')) {
+        style = 'green.bgWhite';
+      } else {
+        style = 'white.bgRed';
+      }
+      process.stdout.write(chalk`{${style} ⇥ ${m.format('MM-DD-YYYY')}} `);
+    }
+    process.stdout.write(`${t.msg}\n`);
   });
   Object.values(this.tasks.closed).forEach((t) => {
     process.stdout.write(chalk`{green [X]} {green.bgWhite ${t.id}} ${t.msg}\n`);
