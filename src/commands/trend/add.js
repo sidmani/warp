@@ -1,4 +1,4 @@
-exports.command = 'trend-add <module> <value>';
+exports.command = 'trend-add <module> <value..>';
 exports.describe = 'add a value to a trend';
 
 exports.handler = async function ({ config, value, module }) {

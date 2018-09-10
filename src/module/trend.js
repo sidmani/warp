@@ -9,8 +9,8 @@ class Trend extends BaseModule {
     this.filepath = path.join(moduleDir, `${name}.json`);
   }
 
-  append(value) {
-    this.index.values.push(value);
+  append(values) {
+    this.index.values = this.index.values.concat(values);
     this.setMaxMin();
   }
 
@@ -29,11 +29,18 @@ class Trend extends BaseModule {
   }
 
   display() {
+    const padding = ''.padEnd(10 - this.name.length, ' ');
     const str = this.index.values.map((val, idx) => {
-      const color = this.index.colors[1 + Math.sign(val - (this.index.values[idx - 1] || val))];
-      return chalk`{hex('${color}') ${val}}`;
+      let color;
+      if (idx === 0) {
+        color = this.index.colors[1];
+      } else {
+        color = this.index.colors[1 + Math.sign(val - this.index.values[idx - 1])];
+      }
+      const paddedValue = `${val}`.padStart(3, ' ');
+      return chalk`{hex('${color}') ${paddedValue}}`;
     }).join(' | ');
-    process.stdout.write(chalk`{bgWhite.green ${this.name}} ${str}\n`);
+    process.stdout.write(chalk`{bgWhite.green ${this.name}}${padding}\t${str}\n`);
   }
 }
 
