@@ -19,13 +19,20 @@ function moduleType(type) {
 }
 
 Config.prototype.loadModule = function (name) {
+  if (this.modules[name]) { return Promise.resolve(this.modules[name]); }
+
   const m = this.index.modules[name];
   if (!m) {
     throw new Error(`Cannot find module "${name}"`);
   }
-  if (this.modules[name]) { return Promise.resolve(this.modules[name]); }
+
   this.modules[name] = new (moduleType(m.type))(this.moduleDir, name, this);
   return this.modules[name].load();
+};
+
+Config.prototype.loadModules = function (filter = () => true) {
+  return this.filter(filter)
+    .map(n => this.loadModule(n));
 };
 
 Config.prototype.saveAll = function () {
@@ -65,12 +72,21 @@ Config.prototype.rmModule = function (name) {
   return p;
 };
 
+Config.prototype.filter = function (filter) {
+  return Object.entries(this.index.modules)
+    .filter(([, value]) => filter(value))
+    .map(([key]) => key);
+};
+
+Config.prototype.forEach = function (fn, filter = () => true) {
+  this.filter(filter).forEach(fn);
+};
+
 Config.prototype.display = async function (filter = () => true, options) {
-  const needs = Object.values(this.index.modules)
-    .filter(filter)
-    .map(({ name }) => this.loadModule(name));
+  const needs = this.filter(filter)
+    .map(n => this.loadModule(n));
   const ms = await Promise.all(needs);
-  for (m of ms) {
+  for (const m of ms) {
     await m.displayName(options);
   }
 };

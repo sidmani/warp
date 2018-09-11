@@ -33,7 +33,7 @@ class Trend extends BaseModule {
     const str = this.index.values.map((val, idx) => {
       let color;
       if (idx === 0) {
-        color = this.index.colors[1];
+        [, color] = this.index.colors;
       } else {
         color = this.index.colors[1 + Math.sign(val - this.index.values[idx - 1])];
       }

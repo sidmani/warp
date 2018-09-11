@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const chalk = require('chalk');
 
 class BaseModule {
   constructor(name) {
@@ -10,20 +11,22 @@ class BaseModule {
       .then((f) => {
         this.index = f;
       })
-      .catch((e) => {
-        console.log('no file, will create');
+      .catch(() => {
         this.index = this.constructor.defaultIndex;
       })
       .then(() => this);
   }
 
   save() {
-    const defaultIndex = this.constructor.defaultIndex;
-    return fs.outputJSON(this.filepath, this.index || defaultIndex);
+    return fs.outputJSON(this.filepath, this.index || this.constructor.defaultIndex);
   }
 
   delete() {
     return fs.remove(this.filepath);
+  }
+
+  displayName() {
+    process.stdout.write(chalk`{${this.color()}.bgWhite ${this.name}} {white ${this.constructor.type()}}\n`);
   }
 }
 

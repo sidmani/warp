@@ -3,12 +3,15 @@ const moment = require('moment');
 const chalk = require('chalk');
 const BaseModule = require('../base');
 
-
 class Tasks extends BaseModule {
   constructor(moduleDir, name) {
     super(name);
     this.filepath = path.join(moduleDir, `${name}.json`);
   }
+
+  static type() { return 'TASK-LIST'; }
+
+  color() { return 'green'; }
 }
 
 Tasks.defaultIndex = { open: {}, closed: {} };
@@ -62,9 +65,9 @@ Tasks.prototype.display = function () {
   Object.values(this.index.open).forEach((t) => {
     process.stdout.write(chalk`{red [ ]} {red.bgWhite ${t.id}} `);
     const now = moment();
+    let style;
     if (t.assigned) {
       const m = moment(t.assigned);
-      let style;
       if (m.isSameOrAfter(now, 'day')) {
         style = 'blue.bgWhite';
       } else {
@@ -74,7 +77,6 @@ Tasks.prototype.display = function () {
     }
     if (t.due) {
       const m = moment(t.due);
-      let style;
       if (m.isSameOrAfter(now, 'day')) {
         style = 'green.bgWhite';
       } else {
@@ -87,11 +89,6 @@ Tasks.prototype.display = function () {
   Object.values(this.index.closed).forEach((t) => {
     process.stdout.write(chalk`{green [X]} {green.bgWhite ${t.id}} ${t.msg}\n`);
   });
-};
-
-Tasks.prototype.displayName = function () {
-  process.stdout.write(chalk.green.bgWhite(this.name));
-  process.stdout.write(chalk.white(' TASK-LIST\n'));
 };
 
 Tasks.prototype.configure = function (argv) {
