@@ -6,10 +6,6 @@ exports.describe = 'log an activity';
 async function setup({ config, module, day }) {
   await config.loadModule(module);
 
-  if (config.modules[module].type !== 'log') {
-    throw new Error(`Cannot find module of type log with name "${module}"`);
-  }
-
   return moment(day, 'MM-DD-YYYY');
 }
 
