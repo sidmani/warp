@@ -48,10 +48,7 @@ Config.prototype.addModule = function (type, name = type) {
     throw new Error(`Unknown module type "${type}"`);
   }
 
-  this.index.modules[name] = {
-    name,
-    type,
-  };
+  this.index.modules[name] = { name, type };
 
   this.modules[name] = new constructor(this.moduleDir, name);
 };
@@ -80,8 +77,7 @@ Config.prototype.forEach = function (fn, filter = () => true) {
 };
 
 Config.prototype.display = async function (filter = () => true, options) {
-  const needs = this.filter(filter)
-    .map(n => this.loadModule(n));
+  const needs = this.loadModules(filter);
   const ms = await Promise.all(needs);
   for (const m of ms) {
     await m.displayName(options);

@@ -8,13 +8,17 @@ class View extends BaseModule {
     this.filepath = path.join(moduleDir, `${name}.json`);
     this.loader = n => config.loadModule(n);
   }
+
+  loadAllModules() {
+    return Promise.all(this.index.modules.map(m => this.loader(m)));
+  }
+
+  configure(argv) {
+    this.index.modules = argv.modules.split(' ');
+  }
 }
 
 View.defaultIndex = { modules: [] };
-
-View.prototype.loadAllModules = function () {
-  return Promise.all(this.index.modules.map(m => this.loader(m)));
-};
 
 View.prototype.display = async function () {
   const modules = await this.loadAllModules();
@@ -32,10 +36,6 @@ View.prototype.displayName = async function (options = {}) {
       await m.displayName();
     }
   }
-};
-
-View.prototype.configure = function (argv) {
-  this.index.modules = argv.modules.split(' ');
 };
 
 module.exports = View;
