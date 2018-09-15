@@ -2,7 +2,6 @@ const path = require('path');
 const chalk = require('chalk');
 const BaseModule = require('../base');
 
-
 class Trend extends BaseModule {
   constructor(moduleDir, name) {
     super(name);

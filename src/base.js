@@ -25,8 +25,8 @@ class BaseModule {
     return fs.remove(this.filepath);
   }
 
-  displayName() {
-    process.stdout.write(chalk`{${this.color()}.bgWhite ${this.name}} {white ${this.constructor.type()}}\n`);
+  displayName(str) {
+    process.stdout.write(chalk`{${this.color()}.bgWhite ${this.name}} {white ${this.constructor.type()}} ${str}\n`);
   }
 }
 

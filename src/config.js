@@ -2,21 +2,18 @@ const path = require('path');
 const BaseModule = require('./base');
 
 class Config extends BaseModule {
-  constructor(warpDir) {
+  constructor(warpDir, constructors) {
     super('warp-config');
     this.filepath = path.join(warpDir, 'warp.json');
     this.moduleDir = path.join(warpDir, 'modules');
     this.modules = {};
+    this.constructors = constructors;
   }
 }
 
 Config.defaultIndex = {
   modules: {},
 };
-
-function moduleType(type) {
-  return require(`./module/${type}.js`);
-}
 
 Config.prototype.loadModule = function (name) {
   if (this.modules[name]) { return Promise.resolve(this.modules[name]); }
@@ -26,7 +23,7 @@ Config.prototype.loadModule = function (name) {
     throw new Error(`Cannot find module "${name}"`);
   }
 
-  this.modules[name] = new (moduleType(m.type))(this.moduleDir, name, this);
+  this.modules[name] = new this.constructors[m.type](this.moduleDir, name, this);
   return this.modules[name].load();
 };
 
@@ -46,7 +43,7 @@ Config.prototype.addModule = function (type, name = type) {
     throw new Error(`Module with name "${name}" already exists`);
   }
 
-  const constructor = moduleType(type);
+  const constructor = this.constructors[type];
   if (!constructor) {
     throw new Error(`Unknown module type "${type}"`);
   }
