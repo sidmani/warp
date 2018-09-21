@@ -129,9 +129,7 @@ class Log extends BaseModule {
     }
   }
 
-  display() {
-    this.displayName();
-    hm(this.grid(), '#ebedf0', this.index.color, 0, this.index.max || 1);
+  displayGoals() {
     this.index.goals
       .forEach((g) => {
         const goalEval = this.evaluateGoal(g);
@@ -150,6 +148,12 @@ class Log extends BaseModule {
         }
       });
     process.stdout.write('\n');
+  }
+
+  display() {
+    this.displayName();
+    hm(this.grid(), '#ebedf0', this.index.color, 0, this.index.max || 1);
+    this.displayGoals();
   }
 
   static type() {

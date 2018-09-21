@@ -25,6 +25,12 @@ Multilog.prototype.display = async function () {
     });
   });
   hm(grids[0], '#ebedf0', '#196127', 0, 1);
+  modules.forEach(m => {
+    if (m.index.goals.length > 0) {
+      m.displayName();
+      m.displayGoals();
+    }
+  });
 };
 
 module.exports = Multilog;
