@@ -35,7 +35,7 @@ class Log extends BaseModule {
   }
 
   sumDay(timestamp) {
-    return this.index.entries[timestamp].reduce((a, e) => a + e.value, 0);
+    return this.index.entries[timestamp] ? this.index.entries[timestamp].reduce((a, e) => a + e.value, 0) : 0;
   }
 
   grid(width = 52, center = moment()) {
@@ -98,33 +98,29 @@ class Log extends BaseModule {
       const ok = this.compare(goal.comparator, total, goal.value);
       return { total, ok };
     } else if (goal.every) {
+      const keys = Object.keys(this.index.entries);
+      let sum = 0;
       let streak = 0;
       let maxStreak = 0;
-      let sum = 0;
-      let start;
-      Object.keys(this.index.entries)
-        .forEach((key) => {
-          if (!start) {
-            start = key;
-          }
+      for (let i = parseInt(keys[0], 10); i <= parseInt(keys[keys.length - 1], 10); i += goal.every) {
+        sum = 0;
+        for (let j = 0; j < goal.every; j += 1) {
+          sum += this.sumDay(`${i + j}`);
+        }
+        if (this.compare(goal.comparator, sum, goal.value)) {
+          streak += 1;
+          maxStreak = Math.max(streak, maxStreak);
+        } else {
+          maxStreak = Math.max(streak, maxStreak);
+          streak = 0;
+        }
+      }
 
-          if (key - start > goal.every) {
-            if (this.compare(goal.comparator, sum, goal.value)) {
-              streak += 1;
-            } else {
-              streak = 0;
-            }
-            maxStreak = Math.max(maxStreak, streak);
-            sum = 0;
-            start = key;
-          }
-          sum += this.sumDay(key);
-        });
       return {
         streak,
         maxStreak,
-        ok: streak !== 0,
         sum,
+        ok: streak !== 0,
       };
     }
   }
@@ -178,7 +174,7 @@ Log.defaultIndex = {
 Log.command = yargs => yargs
   .command(['add <module> <value>', '$0'], 'add a log entry', {}, async (argv) => {
     await argv.config.loadModule(argv.module);
-    argv.config.modules[argv.module].add('work', argv.value, moment(argv.day, 'MM-DD-YYYY'));
+    argv.config.modules[argv.module].add('work', argv.value, moment(argv.date, 'MM-DD-YYYY'));
     await argv.config.saveAll();
   })
   .command('clear <module>', 'clear the log for a specific day', {}, async (argv) => {
