@@ -14,7 +14,7 @@ class View extends BaseModule {
   }
 
   configure(argv) {
-    this.index.modules = argv.modules.split(' ');
+    this.index.modules = argv.contains.split(' ');
   }
 }
 

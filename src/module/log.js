@@ -31,7 +31,7 @@ class Log extends BaseModule {
   clear(timestamp) {
     const today = Math.floor(timestamp.startOf('day').unix() / 86400);
     delete this.index.entries[today];
-    this.index.max = Math.max(Object.keys(this.index.entries).map(this.sumDay));
+    this.index.max = Math.max(Object.keys(this.index.entries).map(d => this.sumDay(d)));
   }
 
   sumDay(timestamp) {
@@ -179,7 +179,7 @@ Log.command = yargs => yargs
   })
   .command('clear <module>', 'clear the log for a specific day', {}, async (argv) => {
     await argv.config.loadModule(argv.module);
-    argv.config.modules[argv.module].clear(moment(argv.day, 'MM-DD-YYYY'));
+    argv.config.modules[argv.module].clear(moment(argv.date, 'MM-DD-YYYY'));
     await argv.config.saveAll();
   })
   .command('goal <module> <target>', 'set a goal', {
@@ -195,7 +195,7 @@ Log.command = yargs => yargs
     argv.config.modules[argv.module].goal(argv.target, argv.before, argv.every);
     await argv.config.saveAll();
   })
-  .option('day', {
+  .option('date', {
     alias: 'd',
     default: moment().format('MM-DD-YYYY'),
   });
