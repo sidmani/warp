@@ -1,6 +1,6 @@
 {
   "name": "warp-planner",
-  "version": "0.10.3",
+  "version": "0.10.4",
   "description": "get shit done for once",
   "main": "src/main.js",
   "repository": "https://github.com/sidmani/warp",
