@@ -195,6 +195,19 @@ Log.command = yargs => yargs
     argv.config.modules[argv.module].goal(argv.target, argv.before, argv.every);
     await argv.config.saveAll();
   })
+  .command('sum <module> [start] [end]', 'sum quantities', {}, async (argv) => {
+    await argv.config.loadModule(argv.module);
+    const start = argv.start ? moment(argv.start, 'MM-DD-YYYY') : moment();
+    const end = argv.end ? moment(argv.end, 'MM-DD-YYYY') : moment();
+    const startTS = Math.floor(start.startOf('day').unix() / 86400);
+    const endTS = Math.floor(end.startOf('day').unix() / 86400);
+
+    let sum = 0;
+    for (let i = startTS; i <= endTS; i += 1) {
+      sum += argv.config.modules[argv.module].sumDay(i);
+    }
+    process.stdout.write(chalk`{bgWhite.red SUM} {bgWhite.blue ${start.format('MM-DD-YYYY')}} -> {bgWhite.blue ${end.format('MM-DD-YYYY')}}: {bgWhite.red ${sum}}\n`);
+  })
   .option('date', {
     alias: 'd',
     default: moment().format('MM-DD-YYYY'),
