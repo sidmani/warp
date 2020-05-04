@@ -5,13 +5,13 @@ const View = require('./view');
 class Multilog extends View { }
 
 Multilog.prototype.displayName = function () {
-  process.stdout.write(chalk`{blue.bgWhite ${this.name}} {white MULTI-LOG}\n`);
+  process.stdout.write(chalk`{blue ${this.name}} {gray MULTI-LOG}\n`);
 };
 
 Multilog.prototype.display = async function () {
   const modules = await this.loadAllModules();
-  const str = modules.map(m => chalk`{bgWhite.hex('${m.index.color}') ${m.name}}`).join(' + ');
-  process.stdout.write(chalk`${str} {white MULTI-LOG}\n`);
+  const str = modules.map(m => chalk`{hex('${m.index.color}') ${m.name}}`).join(' + ');
+  process.stdout.write(chalk`${str} {gray MULTI-LOG}\n`);
   const grids = modules.map(m => m.grid());
   grids.forEach((grid, index) => {
     grid.forEach((row, rowNum) => {
@@ -24,7 +24,7 @@ Multilog.prototype.display = async function () {
       });
     });
   });
-  hm(grids[0], '#ebedf0', '#196127', 0, 1);
+  hm(grids[0], '#504945', '#504946', 0, 1, '●');
   modules.forEach(m => {
     if (m.index.goals.length > 0) {
       m.displayName();

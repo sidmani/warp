@@ -148,7 +148,7 @@ class Log extends BaseModule {
 
   display() {
     this.displayName();
-    hm(this.grid(), '#504945', this.index.color, 0, this.index.max || 1, '⬛');
+    hm(this.grid(), '#504945', this.index.color, 0, this.index.max || 1, '●');
     this.displayGoals();
   }
 

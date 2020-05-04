@@ -28,7 +28,7 @@ View.prototype.display = async function () {
 };
 
 View.prototype.displayName = async function (options = {}) {
-  process.stdout.write(chalk`{blue.bgWhite ${this.name}} {white VIEW}\n`);
+  process.stdout.write(chalk`{blue ${this.name}} {gray VIEW}\n`);
   if (options.nest) {
     const modules = await this.loadAllModules();
     for (const m of modules) {
