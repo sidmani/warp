@@ -26,7 +26,7 @@ class BaseModule {
   }
 
   displayName(str = '') {
-    process.stdout.write(chalk`{${this.color()}.bgWhite ${this.name}} {white ${this.constructor.type()}} ${str}\n`);
+    process.stdout.write(chalk`{${this.color()} ${this.name}} {gray ${this.constructor.type()}} ${str}\n`);
   }
 }
 

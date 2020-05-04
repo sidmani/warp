@@ -46,8 +46,8 @@ class Log extends BaseModule {
 
     const centerTimestamp = Math.floor(center.startOf('day').unix() / 86400);
     const dayOfWeek = center.day();
-    const minimumDay = centerTimestamp - Math.floor(width / 2) * 7 - dayOfWeek;
-    const maximumDay = minimumDay + width * 7;
+    const minimumDay = centerTimestamp - (Math.floor(width) - 1) * 7 - dayOfWeek;
+    const maximumDay = centerTimestamp + 1;
     Object.keys(this.index.entries).forEach((k) => {
       const key = parseInt(k, 10);
       if (key > minimumDay && key < maximumDay) {
@@ -148,7 +148,7 @@ class Log extends BaseModule {
 
   display() {
     this.displayName();
-    hm(this.grid(), '#ebedf0', this.index.color, 0, this.index.max || 1);
+    hm(this.grid(), '#504945', this.index.color, 0, this.index.max || 1, '⬛');
     this.displayGoals();
   }
 
@@ -166,7 +166,7 @@ class Log extends BaseModule {
 }
 
 Log.defaultIndex = {
-  color: '#196127',
+  color: '#b8bb26',
   entries: { },
   goals: [],
 };
