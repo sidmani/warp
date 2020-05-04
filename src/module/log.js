@@ -39,6 +39,8 @@ class Log extends BaseModule {
   }
 
   grid(width = 52, center = moment()) {
+    width = Math.min(process.stdout.columns / 2, width);
+
     const arr = [];
     for (let i = 0; i < 7; i += 1) {
       arr[i] = new Array(width);
