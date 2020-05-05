@@ -176,8 +176,10 @@ Log.defaultIndex = {
 Log.command = yargs => yargs
   .command(['add <module> <value>', '$0'], 'add a log entry', {}, async (argv) => {
     await argv.config.loadModule(argv.module);
-    argv.config.modules[argv.module].add('work', argv.value, moment(argv.date, 'MM-DD-YYYY'));
+    const m = argv.config.modules[argv.module]
+    m.add('work', argv.value, moment(argv.date, 'MM-DD-YYYY'));
     await argv.config.saveAll();
+    m.display();
   })
   .command('clear <module>', 'clear the log for a specific day', {}, async (argv) => {
     await argv.config.loadModule(argv.module);
