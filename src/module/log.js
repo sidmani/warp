@@ -61,6 +61,24 @@ class Log extends BaseModule {
     return arr;
   }
 
+  linear(width = 52, center = moment()) {
+    width = Math.min(process.stdout.columns / 2, width);
+    const arr = [new Array(width)];
+
+    const centerTimestamp = Math.floor(center.startOf('day').unix() / 86400);
+    const dayOfWeek = center.day();
+    const minimumDay = centerTimestamp - width;
+    const maximumDay = centerTimestamp + 1;
+    Object.keys(this.index.entries).forEach((k) => {
+      const key = parseInt(k, 10);
+      if (key > minimumDay && key < maximumDay) {
+        arr[0][key - minimumDay] = this.sumDay(key);
+      }
+    });
+
+    return arr;
+  }
+
   schedule(type, value, starting) {
     switch (type) {
       case 'every':
@@ -149,7 +167,13 @@ class Log extends BaseModule {
 
   display() {
     this.displayName();
-    hm(this.grid(), '#504945', this.index.color, 0, this.index.max || 1, '●');
+    let grid;
+    if (this.index.short) {
+      grid = this.linear();
+    } else {
+      grid = this.grid();
+    }
+    hm(grid, '#504945', this.index.color, 0, this.index.max || 1, '●');
     this.displayGoals();
   }
 
@@ -163,6 +187,9 @@ class Log extends BaseModule {
 
   configure(argv) {
     if (argv.color) { this.index.color = argv.color; }
+    if (argv.short !== undefined) {
+      this.index.short = argv.short;
+    }
   }
 }
 
