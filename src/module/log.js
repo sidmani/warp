@@ -67,7 +67,7 @@ class Log extends BaseModule {
 
     const centerTimestamp = Math.floor(center.startOf('day').unix() / 86400);
     const dayOfWeek = center.day();
-    const minimumDay = centerTimestamp - width;
+    const minimumDay = centerTimestamp - width + 1;
     const maximumDay = centerTimestamp + 1;
     Object.keys(this.index.entries).forEach((k) => {
       const key = parseInt(k, 10);
