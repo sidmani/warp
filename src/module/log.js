@@ -145,7 +145,6 @@ class Log extends BaseModule {
           process.stdout.write(chalk`{bgWhite ${goalEval.streak} STRK / ${goalEval.maxStreak} MAX}\n`);
         }
       });
-    process.stdout.write('\n');
   }
 
   display() {
